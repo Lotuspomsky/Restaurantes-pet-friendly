@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotus_Pomsky 🐾 </title>
+    
+    <title>De Patas con Lotus 🐾</title>
+
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="logo.png">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <style>
         :root { 
             --primary: #a67c52; /* Café del logo */
             --dark: #111; 
-            --header-bg: #2b231d; /* Fondo oscuro café */
-            --header-text: #f4ece4; /* Color crema del logo */
+            --header-bg: #1a1a1a; /* Fondo oscuro profundo */
+            --header-text: #f4ece4; /* Crema del logo */
         }
         body { margin:0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--dark); color:white; overflow: hidden; }
         
         header { 
             background: var(--header-bg);
             color: var(--header-text);
-            padding: 8px 20px;
+            padding: 10px 20px;
             text-align: left;
             font-weight: bold; 
             font-size: 20px; 
@@ -30,11 +34,12 @@
         }
 
         #header-logo {
-            height: 50px;
-            width: 50px;
+            height: 45px;
+            width: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--header-text);
+            border: 2px solid var(--primary);
+            flex-shrink: 0;
         }
 
         #controls { 
@@ -90,7 +95,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore-compat.js"></script>
 
 <script>
-// 🔥 CONFIGURACIÓN FIREBASE - ¡RECUERDA PONER TUS DATOS AQUÍ!
+// 🔥 IMPORTANTE: Pega aquí tus credenciales de Firebase para que funcione el mapa
 const firebaseConfig = {
   apiKey: "TU_API_KEY",
   authDomain: "TU_PROYECTO.firebaseapp.com",
@@ -103,7 +108,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Inicializar Mapa centrado en Bogotá
 var map = L.map('map').setView([4.65, -74.06], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap'
@@ -144,7 +148,7 @@ async function cargar() {
             }
         });
     } catch (error) {
-        console.error("Error cargando datos:", error);
+        console.error("Error:", error);
     }
 }
 
@@ -158,7 +162,7 @@ function miUbicacion() {
 }
 
 function ir(lat, lng) {
-    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 }
 
 function fav(id) {
@@ -166,9 +170,7 @@ function fav(id) {
     if (!favs.includes(id)) {
         favs.push(id);
         localStorage.setItem("favs", JSON.stringify(favs));
-        alert("¡Guardado en tus favoritos! ❤️");
-    } else {
-        alert("Ya está en tus favoritos");
+        alert("¡Guardado en favoritos! ❤️");
     }
 }
 
