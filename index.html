@@ -54,6 +54,7 @@
 
         #map { height: calc(100vh - 120px); width: 100%; }
 
+        /* Estilos Popup */
         .leaflet-popup-content-wrapper { background: #222; color: white; border-radius: 12px; }
         .popup-card { width: 200px; }
         .popup-card img { width: 100%; border-radius: 8px; height: 120px; object-fit: cover; }
@@ -67,7 +68,7 @@
 <body>
 
 <header>
-    <img id="header-logo" src="logo.png" alt="Logo">
+    <img id="header-logo" src="logo.png" alt="Lotus">
     <div>De Patas con Lotus</div>
 </header>
 
@@ -75,9 +76,9 @@
     <input id="search" placeholder="🔍 Buscar lugar...">
     <select id="filter">
         <option value="all">Todo</option>
-        <option value="cafe">Cafés</option>
         <option value="restaurante">Restaurantes</option>
-        <option value="parque">Parques</option>
+        <option value="salon">Salón de onces</option>
+        <option value="tienda">Almacenes para mascota</option>
     </select>
     <button onclick="miUbicacion()">📍</button>
 </div>
@@ -89,7 +90,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore-compat.js"></script>
 
 <script>
-// Pon aquí tus credenciales de Firebase (No las borres)
+// 🔥 CONFIGURACIÓN FIREBASE - ¡RECUERDA PONER TUS DATOS AQUÍ!
 const firebaseConfig = {
   apiKey: "TU_API_KEY",
   authDomain: "TU_PROYECTO.firebaseapp.com",
@@ -102,6 +103,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// Inicializar Mapa centrado en Bogotá
 var map = L.map('map').setView([4.65, -74.06], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap'
@@ -112,6 +114,7 @@ var markers = [];
 async function cargar() {
     markers.forEach(m => map.removeLayer(m));
     markers = [];
+
     const filtro = document.getElementById("filter").value;
     const texto = document.getElementById("search").value.toLowerCase();
 
@@ -119,8 +122,12 @@ async function cargar() {
         const snapshot = await db.collection("lugares").get();
         snapshot.forEach(doc => {
             const l = doc.data();
-            if ((filtro === "all" || l.tipo === filtro) && l.nombre.toLowerCase().includes(texto)) {
+            
+            if ((filtro === "all" || l.tipo === filtro) && 
+                l.nombre.toLowerCase().includes(texto)) {
+
                 const marker = L.marker([l.lat, l.lng]).addTo(map);
+                
                 marker.bindPopup(`
                     <div class="popup-card">
                         <img src="${l.img || 'https://via.placeholder.com/150'}">
@@ -136,7 +143,9 @@ async function cargar() {
                 markers.push(marker);
             }
         });
-    } catch (error) { console.error("Error:", error); }
+    } catch (error) {
+        console.error("Error cargando datos:", error);
+    }
 }
 
 function miUbicacion() {
@@ -157,12 +166,15 @@ function fav(id) {
     if (!favs.includes(id)) {
         favs.push(id);
         localStorage.setItem("favs", JSON.stringify(favs));
-        alert("¡Guardado en favoritos! ❤️");
+        alert("¡Guardado en tus favoritos! ❤️");
+    } else {
+        alert("Ya está en tus favoritos");
     }
 }
 
 document.getElementById("search").addEventListener("input", cargar);
 document.getElementById("filter").addEventListener("change", cargar);
+
 cargar();
 </script>
 </body>
